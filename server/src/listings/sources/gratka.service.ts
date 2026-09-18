@@ -6,9 +6,13 @@ import { Listing } from '../interfaces/listing.interface';
 import { AddressExtractor } from '../parsers/adressExtractor';
 import { DepositExtractor } from '../parsers/depositExtractor';
 import { RentExtractor } from '../parsers/rentExtractor';
+import { GeocodingService } from '../../geocoding/geocoding.service';
 
 @Injectable()
 export class GratkaService {
+  constructor(
+    private readonly geocodingService: GeocodingService,
+  ) {}
   private readonly baseUrl = 'https://gratka.pl';
 
   async findAll(city = 'lodz'): Promise<Listing[]> {
@@ -188,7 +192,10 @@ export class GratkaService {
         console.log(`Checking Gratka listing: ${listing.url}`);
 
         try {
-          return await this.checkListing(listing.url);
+          return await this.checkListing(
+            listing.url,
+            city,
+        );
         } catch (error) {
           console.error(
             `Failed to check listing: ${listing.url}`,
@@ -258,6 +265,7 @@ export class GratkaService {
 
   async checkListing(
     url: string,
+    city: string,
   ): Promise<Listing | null> {
     try {
       console.log(
@@ -413,6 +421,10 @@ export class GratkaService {
           .attr('href')
           ?.trim() || url;
 
+      const coordinates = await this.geocodingService.geocode(address, city);
+      const latitude = coordinates?.latitude ?? null;
+      const longitude = coordinates?.longitude ?? null;
+
 
       const listing: Listing = {
         title,
@@ -424,6 +436,8 @@ export class GratkaService {
         deposit,
         address,
         description,
+        latitude,
+        longitude,
         addedAt,
       };
 

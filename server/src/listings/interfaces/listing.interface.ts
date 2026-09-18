@@ -8,5 +8,7 @@ export interface Listing {
   deposit: number | null;
   address: string | null;
   description: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   addedAt?: string | null;
 }
