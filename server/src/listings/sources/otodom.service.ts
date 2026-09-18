@@ -78,7 +78,6 @@ export class OtodomService {
           )
         : null;
 
-      // Address
       let address =
         card
           .find('.css-oxb2ca')
@@ -86,7 +85,6 @@ export class OtodomService {
           .text()
           .trim() || null;
 
-      // Try to get house number from title
       if (address && title) {
         const streetMatch = title.match(
           /(?:ul\.\s*)?([A-ZĄĆĘŁŃÓŚŹŻ][A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż.\- ]+?)\s+(\d+[A-Za-z]?(?:\/\d+)?)/i,
@@ -115,15 +113,19 @@ export class OtodomService {
       if (!title && !listingUrl) {
         return;
       }
+      const rooms = null;
+      const area = null;
 
       listings.push({
         title,
         url: listingUrl,
-        text,
         price,
         rent,
         deposit,
         address,
+        description: null,
+        rooms,
+        area,
       });
     });
 
