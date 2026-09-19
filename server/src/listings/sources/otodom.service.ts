@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-import { Listing } from '../interfaces/listing.interface';
+import { Listing, ListingSource } from '../interfaces/listing.interface';
 
 @Injectable()
 export class OtodomService {
@@ -121,6 +121,9 @@ export class OtodomService {
         url: listingUrl,
         price,
         rent,
+        source: ListingSource.OTODOM,
+        isExactAddress: false,
+        externalId: listingUrl!.split('/').pop() || '',
         deposit,
         address,
         description: null,

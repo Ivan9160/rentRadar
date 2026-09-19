@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-import { Listing } from '../interfaces/listing.interface';
+import { Listing, ListingSource } from '../interfaces/listing.interface';
 import { AddressExtractor } from '../parsers/adressExtractor';
 import { DepositExtractor } from '../parsers/depositExtractor';
 import { RentExtractor } from '../parsers/rentExtractor';
 import { GeocodingService } from '../../geocoding/geocoding.service';
+
 
 @Injectable()
 export class GratkaService {
@@ -165,6 +166,9 @@ export class GratkaService {
         price,
         rent: null,
         deposit: null,
+        isExactAddress: false,
+        source: ListingSource.GRATKA,
+        externalId: listingUrl!.split('/').pop() || '',
         address,
         rooms,
         area,
@@ -406,7 +410,7 @@ export class GratkaService {
       }
       const locationRow = $('[data-cy="locationRowTitle"]').first();
 
-      const address = AddressExtractor.extractExactAddress(
+      const { address, isExactAddress } = AddressExtractor.extractExactAddress(
         description,
         locationRow,
       );
@@ -431,6 +435,9 @@ export class GratkaService {
         url: canonicalUrl,
         price,
         rent,
+        source: ListingSource.GRATKA,
+        externalId: url.split('/').pop() || '',
+        isExactAddress,
         rooms,
         area,
         deposit,

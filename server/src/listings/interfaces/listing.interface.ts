@@ -1,6 +1,14 @@
+export enum ListingSource {
+  GRATKA = 'GRATKA',
+  OTODOM = 'OTODOM'
+}
+
 export interface Listing {
   title: string;
   url: string | null;
+  externalId: string;
+  source: ListingSource;
+  isExactAddress: boolean;
   price: number | null;
   rooms: number | null;
   area: number | null;

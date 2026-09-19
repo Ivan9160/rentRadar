@@ -1,0 +1,37 @@
+// use prisma-8
+
+enum ListingSource {
+  GRATKA
+  OTODOM
+}
+
+model Listing {
+  id              Int           @id @default(autoincrement())
+
+  externalId      String
+  source          ListingSource
+
+  title           String
+  url             String
+
+  price           Numeric(10, 2)?
+  rent            Numeric(10, 2)?
+  deposit         Numeric(10, 2)?
+
+  rooms           Int?
+  area            Numeric(10, 2)?
+
+  address         String?
+  isExactAddress  Boolean       @default(false)
+
+  latitude        Numeric(10, 7)?
+  longitude       Numeric(10, 7)?
+
+  description     String?
+  addedAt         DateTime?
+
+  createdAt       DateTime      @default(now())
+  updatedAt temporal.updatedAt()
+
+  @@unique([source, externalId])
+}

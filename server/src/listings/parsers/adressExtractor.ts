@@ -6,9 +6,9 @@ export class AddressExtractor {
   public static extractExactAddress(
     description: string | null,
     locationRow: Cheerio<AnyNode>,
-  ): string | null {
+  ): { address: string | null; isExactAddress: boolean } {
     if (!locationRow.length) {
-      return null;
+      return { address: null, isExactAddress: false };
     }
 
     const locationParts = locationRow
@@ -24,8 +24,13 @@ export class AddressExtractor {
         .replace(/\s+/g, ' ')
         .trim() || null;
 
+    const locationHasHouseNumber =
+      locationParts[0]?.match(
+        /\s\d+[A-Za-z]?(?:\/\d+)?\s*$/i,
+      ) !== null;
+
     if (!description) {
-      return locationAddress;
+      return { address: locationAddress, isExactAddress: locationHasHouseNumber };
     }
 
     const street = locationAddress
@@ -34,24 +39,24 @@ export class AddressExtractor {
       .filter(Boolean)[0] ?? null;
 
     if (!street) {
-      return locationAddress;
+      return {  address: locationAddress, isExactAddress: locationHasHouseNumber };
     }
 
     const text = description
       .replace(/\s+/g, ' ')
       .trim();
 
-    const houseNumber = '(\\d+[A-Za-z]?(?:\\/\\d+)?)';
+    const houseNumberPattern = '(\\d+[A-Za-z]?(?:\\/\\d+)?)';
 
     const patterns = [
-      new RegExp(`\\bprzy\\s+ulic(?:y|ą)\\s+(.+?)\\s+${houseNumber}`, 'i'),
-      new RegExp(`\\bprzy\\s+ul\\.?\\s+(.+?)\\s+${houseNumber}`, 'i'),
-      new RegExp(`\\bprzy\\s+(.+?)\\s+${houseNumber}`, 'i'),
-      new RegExp(`\\bulic(?:y|ą)\\s+(.+?)\\s+${houseNumber}`, 'i'),
-      new RegExp(`\\bul\\.?\\s+(.+?)\\s+${houseNumber}`, 'i'),
-      new RegExp(`\\balei\\s+(.+?)\\s+${houseNumber}`, 'i'),
-      new RegExp(`\\baleja\\s+(.+?)\\s+${houseNumber}`, 'i'),
-      new RegExp(`\\bal\\.?\\s+(.+?)\\s+${houseNumber}`, 'i'),
+      new RegExp(`\\bprzy\\s+ulic(?:y|ą)\\s+(.+?)\\s+${houseNumberPattern}`, 'i'),
+      new RegExp(`\\bprzy\\s+ul\\.?\\s+(.+?)\\s+${houseNumberPattern}`, 'i'),
+      new RegExp(`\\bprzy\\s+(.+?)\\s+${houseNumberPattern}`, 'i'),
+      new RegExp(`\\bulic(?:y|ą)\\s+(.+?)\\s+${houseNumberPattern}`, 'i'),
+      new RegExp(`\\bul\\.?\\s+(.+?)\\s+${houseNumberPattern}`, 'i'),
+      new RegExp(`\\balei\\s+(.+?)\\s+${houseNumberPattern}`, 'i'),
+      new RegExp(`\\baleja\\s+(.+?)\\s+${houseNumberPattern}`, 'i'),
+      new RegExp(`\\bal\\.?\\s+(.+?)\\s+${houseNumberPattern}`, 'i'),
     ];
 
     const canonicalStreet = street
@@ -98,11 +103,16 @@ export class AddressExtractor {
       console.log(
         'EXACT ADDRESS FOUND:',
         `${street} ${foundHouseNumber}`,
+        'FOUND HOUSE NUMBER:',
+        foundHouseNumber,
       );
 
-      return `${street} ${foundHouseNumber}`;
+      return {
+        address: `${street} ${foundHouseNumber}`,
+        isExactAddress: true,
+      };
     }
 
-    return locationAddress;
+    return { address: locationAddress, isExactAddress: locationHasHouseNumber };
   }
 }

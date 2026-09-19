@@ -1,0 +1,100 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.listing",
+    "label": "Create table \"listing\"",
+    "summary": "Creates table \"listing\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "listing"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"listing\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"listing\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"listing\"",
+        "sql": "CREATE TABLE \"public\".\"listing\" (\n  \"addedAt\" timestamptz,\n  \"address\" text,\n  \"area\" numeric(10,2),\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deposit\" numeric(10,2),\n  \"description\" text,\n  \"externalId\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isExactAddress\" bool DEFAULT false NOT NULL,\n  \"latitude\" numeric(10,7),\n  \"longitude\" numeric(10,7),\n  \"price\" numeric(10,2),\n  \"rent\" numeric(10,2),\n  \"rooms\" int4,\n  \"source\" text NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"url\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"listing_source_check_527f1cb0\" CHECK (\"source\" IN ('GRATKA', 'OTODOM'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"listing\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"listing\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.listing.listing_source_externalId_key",
+    "label": "Add unique constraint on \"listing\" (source, externalId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "listing_source_externalId_key",
+        "table": "listing"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"listing_source_externalId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "listing_source_externalId_key",
+          "public",
+          "\"public\".\"listing\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"listing_source_externalId_key\"",
+        "sql": "ALTER TABLE \"public\".\"listing\" ADD CONSTRAINT \"listing_source_externalId_key\" UNIQUE (\"source\", \"externalId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"listing_source_externalId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "listing_source_externalId_key",
+          "public",
+          "\"public\".\"listing\""
+        ]
+      }
+    ]
+  }
+]
