@@ -51,6 +51,13 @@
                   "kind": "scalar"
                 }
               },
+              "city": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -175,6 +182,9 @@
                 "area": {
                   "column": "area"
                 },
+                "city": {
+                  "column": "city"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -256,6 +266,11 @@
                 "area": {
                   "codecId": "pg/float8@1",
                   "nativeType": "float8",
+                  "nullable": true
+                },
+                "city": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
                   "nullable": true
                 },
                 "createdAt": {
@@ -383,7 +398,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e98e2e822786bb134fde970e2e0ab68a01729384ede0c32e16bad816a6178bc3"
+    "storageHash": "d07646c7e51112f55427c15acce364874ac15b770a554eb5f608da29ab34bd5a"
   },
   "execution": {
     "executionHash": "67a1bc0350cedb30f57ea2466628492fa3c5dd9758c82379c01184eccb51e3c8",

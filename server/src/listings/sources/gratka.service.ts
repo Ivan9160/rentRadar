@@ -9,215 +9,147 @@ import { RentExtractor } from '../parsers/rentExtractor.ts';
 import { GeocodingService } from '../../geocoding/geocoding.service.ts';
 
 
+
+
+
 @Injectable()
 export class GratkaService {
   constructor(
     private readonly geocodingService: GeocodingService,
   ) {}
   private readonly baseUrl = 'https://gratka.pl';
+  private readonly maxPages = 40;
+  private readonly pageDelayMs = 3000;
+  private readonly listingDelayMs = 2000;
+  private readonly concurrency = 2;
+  private blocked = false;
 
-  async findAll(city = 'lodz'): Promise<Listing[]> {
-    const url = `${this.baseUrl}/nieruchomosci/mieszkania/${city}/wynajem`;
+  private readonly headers = {
+  'User-Agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+  Accept:
+    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
+  Referer: 'https://gratka.pl/',
+};
 
-    console.log(`Fetching Gratka: ${url}`);
+private buildPageUrl(city: string, page: number): string {
+  const base = `${this.baseUrl}/nieruchomosci/mieszkania/${city}/wynajem`;
+  return page === 1 ? base : `${base}?page=${page}`;
+}
 
-    const { data } = await axios.get<string>(url, {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-          '(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
-        Referer: 'https://gratka.pl/',
-      },
-      timeout: 15000,
-    });
+private externalIdFromUrl(url: string): string {
+  return url.split('/').pop() || '';
+}
 
-    const $ = cheerio.load(data);
+private sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-    const listings: Listing[] = [];
+private async fetchListingUrls(pageUrl: string): Promise<string[]> {
+  const { data } = await axios.get<string>(pageUrl, {
+    headers: this.headers,
+    timeout: 15000,
+  });
 
-    $('[data-property-id]').each((_, element) => {
-      const card = $(element);
+  const $ = cheerio.load(data);
+  const urls: string[] = [];
 
-      const href = card
-        .find('a[data-cy="propertyUrl"]')
-        .first()
-        .attr('href');
+  $('[data-property-id]').each((_, element) => {
+    const href = $(element)
+      .find('a[data-cy="propertyUrl"]')
+      .first()
+      .attr('href');
 
-      const listingUrl = href
-        ? new URL(href, this.baseUrl).toString()
-        : null;
+    if (href) {
+      urls.push(new URL(href, this.baseUrl).toString());
+    }
+  });
 
-      const text = card
-        .text()
-        .replace(/\s+/g, ' ')
-        .trim();
+  return urls;
+}
 
-      const title = card
-        .find('a.property-card__link')
-        .first()
-        .text()
-        .replace(/\s+/g, ' ')
-        .trim();
+private async mapLimit<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
 
-      let price: number | null = null;
-
-      const priceMatches = text.match(
-        /([\d\s.]+)\s*zł\b/gi,
-      );
-
-      if (priceMatches?.length) {
-        const parsedPrices = priceMatches
-          .map((value) => {
-            const match = value.match(
-              /([\d\s.]+)\s*zł/i,
-            );
-
-            if (!match) {
-              return null;
-            }
-
-            return Number(
-              match[1]
-                .replace(/\s/g, '')
-                .replace(/\./g, ''),
-            );
-          })
-          .filter(
-            (value): value is number =>
-              value !== null && !Number.isNaN(value),
-          );
-
-        price = parsedPrices[0] ?? null;
+  const workers = Array.from(
+    { length: Math.min(limit, items.length) },
+    async () => {
+      while (true) {
+        const i = next++;
+        if (i >= items.length) return;
+        results[i] = await fn(items[i]);
       }
-
-      let area: number | null = null;
-
-      const areaMatch = text.match(
-        /([\d\s.,]+)\s*m²/i,
-      );
-
-      if (areaMatch) {
-        area = Number(
-          areaMatch[1]
-            .replace(/\s/g, '')
-            .replace(',', '.'),
-        );
-      }
-
-      let rooms: number | null = null;
-
-      const roomsMatch = text.match(
-        /(\d+)\s*pok(?:ój|oje|oi)/i,
-      );
-
-      if (roomsMatch) {
-        rooms = Number(roomsMatch[1]);
-      }
-
-      let address: string | null = null;
-
-      if (title) {
-        const addressMatch = title.match(
-          /\b([\p{L}ĄĆĘŁŃÓŚŹŻąćęłńóśźż.\- ]+,\s*(?:Śródmieście|Bałuty|Widzew|Polesie|Górna|Łódź)[^]*)$/iu,
-        );
-
-        if (addressMatch) {
-          address = addressMatch[1].trim();
-        }
-      }
-
-      if (!address) {
-        const cityMatch = text.match(
-          /([A-ZĄĆĘŁŃÓŚŹŻ][^,]+),\s*(Śródmieście|Bałuty|Widzew|Polesie|Górna),\s*Łódź,\s*łódzkie/i,
-        );
-
-        if (cityMatch) {
-          address = `${cityMatch[1].trim()}, ${cityMatch[2]}, Łódź, łódzkie`;
-        }
-      }
-
-      const description =
-        card
-          .find('.description__content')
-          .first()
-          .text()
-          .replace(/\s+/g, ' ')
-          .trim() || null;
-
-      const addedAt =
-        card
-          .find('[data-cy="descriptionAddedAtDate"]')
-          .first()
-          .text()
-          .replace(/\s+/g, ' ')
-          .replace(/^Dodane:\s*/i, '')
-          .trim() || null;
-
-      if (!title && !listingUrl) {
-        return;
-      }
-
-      listings.push({
-        title,
-        url: listingUrl!,
-        price,
-        rent: null,
-        deposit: null,
-        isExactAddress: false,
-        source: ListingSource.GRATKA,
-        externalId: listingUrl!.split('/').pop() || '',
-        address,
-        rooms,
-        area,
-        description,
-        addedAt,
-      });
-    });
-
-    const uniqueListings = Array.from(
-      new Map(
-        listings.map((listing) => [
-          listing.url ?? listing.title,
-          listing,
-        ]),
-      ).values(),
-    );
-
-  const detailedListings = (
-    await Promise.all(
-      uniqueListings.map(async (listing) => {
-        if (!listing.url) {
-          return null;
-        }
-
-        console.log(`Checking Gratka listing: ${listing.url}`);
-
-        try {
-          return await this.checkListing(
-            listing.url,
-            city,
-        );
-        } catch (error) {
-          console.error(
-            `Failed to check listing: ${listing.url}`,
-            error,
-          );
-
-          return null;
-        }
-      }),
-    )
-  ).filter(
-    (listing): listing is Listing => listing !== null,
+    },
   );
 
+  await Promise.all(workers);
+  return results;
+}
 
-    return detailedListings;
+async findAll(
+  city: string,
+  knownExternalIds: Set<string>,
+): Promise<Listing[]> {
+  this.blocked = false;
 
+  const urls = new Set<string>();
+  let knownPagesInRow = 0;
+
+  for (let page = 1; page <= this.maxPages; page++) {
+    const pageUrl = this.buildPageUrl(city, page);
+    console.log(`Fetching Gratka page ${page}: ${pageUrl}`);
+
+    let pageUrls: string[];
+    try {
+      pageUrls = await this.fetchListingUrls(pageUrl);
+    } catch (error) {
+      console.error(`Failed to fetch page ${page}`, error);
+      break; // 403/429/404: зупиняємось, а не наполягаємо
+    }
+
+    if (pageUrls.length === 0) break;
+
+    const fresh = pageUrls.filter(
+      (u) =>
+        !knownExternalIds.has(this.externalIdFromUrl(u)) && !urls.has(u),
+    );
+    fresh.forEach((u) => urls.add(u));
+
+    // дві сторінки поспіль без нових оголошень: далі йдуть старіші
+    knownPagesInRow = fresh.length === 0 ? knownPagesInRow + 1 : 0;
+    if (knownPagesInRow >= 2) break;
+
+    await this.sleep(this.pageDelayMs);
   }
+
+  console.log(`New listings to check: ${urls.size}`);
+
+  const results = await this.mapLimit(
+    [...urls],
+    this.concurrency,
+    async (url) => {
+      if (this.blocked) return null;
+
+      try {
+        const listing = await this.checkListing(url, city);
+        await this.sleep(this.listingDelayMs);
+        return listing;
+      } catch (error) {
+        console.error(`Failed to check listing: ${url}`, error);
+        return null;
+      }
+    },
+  );
+
+  return results.filter((l): l is Listing => l !== null);
+}
 
   private parseNumber(
     value: string | undefined | null,

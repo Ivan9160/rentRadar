@@ -13,6 +13,11 @@ export class ListingsController {
     return this.listingsService.findAll(city);
   }
 
+  @Get('sync')
+  sync(@Query('city') city: string) {
+    return this.listingsService.sync(city);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.listingsService.findOne(+id);

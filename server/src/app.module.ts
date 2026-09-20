@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { ListingsModule } from './listings/listings.module.js';
-import { GeocodingModule } from './geocoding/geocoding.module';
+import { AppController } from './app.controller.ts';
+import { AppService } from './app.service.ts';
+import { ListingsModule } from './listings/listings.module.ts';
+import { GeocodingModule } from './geocoding/geocoding.module.ts';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

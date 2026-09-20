@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { GeocodingService } from './geocoding.service.js';
+import { GeocodingService } from './geocoding.service.ts';
 
 @Module({
   providers: [GeocodingService],

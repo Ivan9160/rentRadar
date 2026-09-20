@@ -11,6 +11,7 @@ model Listing {
   source          ListingSource
   title           String
   url             String
+  city            String?
 
   price           Int?
   rent            Int?

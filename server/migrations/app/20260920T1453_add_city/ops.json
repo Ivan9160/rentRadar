@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.listing.city",
+    "label": "Add column \"city\" to \"listing\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "city",
+        "table": "listing"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"city\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "listing",
+          "city"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"city\"",
+        "sql": "ALTER TABLE \"public\".\"listing\" ADD COLUMN \"city\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"city\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "listing",
+          "city"
+        ]
+      }
+    ]
+  }
+]

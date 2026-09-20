@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../database/prisma.service.js';
 import { Listing } from './interfaces/listing.interface.js';
+import { Temporal } from 'temporal-polyfill/full/implementation';
 
 @Injectable()
 export class ListingsRepository {
@@ -11,11 +12,12 @@ export class ListingsRepository {
 
   async saveListings(
     listings: Listing[],
+    city: string,
   ): Promise<void> {
     for (const listing of listings) {
       await this.prisma.db.Listing.upsert({
-        create: this.toDatabaseListing(listing),
-        update: this.toDatabaseListing(listing),
+        create: this.toDatabaseListing(listing, city),
+        update: this.toDatabaseListing(listing, city),
 
         conflictOn: {
           source: listing.source,
@@ -25,8 +27,16 @@ export class ListingsRepository {
     }
   }
 
+  async findAll(city:string ) {
+    return this.prisma.db.Listing
+    .where(l => l.city.eq(city))
+      .orderBy((l) => l.createdAt.desc())
+      .all();
+  }
+
   private toDatabaseListing(
     listing: Listing,
+    city: string,
   ) {
     return {
       externalId: listing.externalId,
@@ -34,10 +44,11 @@ export class ListingsRepository {
 
       title: listing.title,
       url: listing.url,
+      city: city,
 
-      price: listing.price,
-      rent: listing.rent,
-      deposit: listing.deposit,
+      price: Math.round(listing.price ?? 0),
+      rent: Math.round(listing.rent ?? 0),
+      deposit: Math.round(listing.deposit ?? 0),
 
       rooms: listing.rooms,
       area: listing.area,
@@ -56,22 +67,25 @@ export class ListingsRepository {
     };
   }
 
-  private parseDate(
-    value: string,
-  ): Date | null {
-    const [day, month, year] =
-      value.split('.').map(Number);
+  private parseDate(value: string): Temporal.Instant | null {
+    const [day, month, year] = value.split('.').map(Number);
 
     if (!day || !month || !year) {
       return null;
     }
 
-    return new Date(
-      Date.UTC(
-        year,
-        month - 1,
-        day,
-      ),
+    return Temporal.Instant.fromEpochMilliseconds(
+      Date.UTC(year, month - 1, day),
     );
+  }
+
+
+  async findExternalIds(source: 'GRATKA' | 'OTODOM'): Promise<Set<string>> {
+    const rows = await this.prisma.db.Listing
+      .where({ source })
+      .select('externalId')
+      .all();
+
+    return new Set(rows.map((r) => r.externalId));
   }
 }
