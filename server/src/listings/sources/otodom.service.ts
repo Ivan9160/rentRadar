@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-import { Listing, ListingSource } from '../interfaces/listing.interface';
+import { Listing, ListingSource } from '../interfaces/listing.interface.js';
 
 @Injectable()
 export class OtodomService {
@@ -118,7 +118,7 @@ export class OtodomService {
 
       listings.push({
         title,
-        url: listingUrl,
+        url: listingUrl!,
         price,
         rent,
         source: ListingSource.OTODOM,

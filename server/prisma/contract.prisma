@@ -7,31 +7,28 @@ enum ListingSource {
 
 model Listing {
   id              Int           @id @default(autoincrement())
-
   externalId      String
   source          ListingSource
-
   title           String
   url             String
 
-  price           Numeric(10, 2)?
-  rent            Numeric(10, 2)?
-  deposit         Numeric(10, 2)?
+  price           Int?
+  rent            Int?
+  deposit         Int?
 
   rooms           Int?
-  area            Numeric(10, 2)?
+  area            Float?
 
   address         String?
   isExactAddress  Boolean       @default(false)
 
-  latitude        Numeric(10, 7)?
-  longitude       Numeric(10, 7)?
+  latitude        Float?
+  longitude       Float?
 
   description     String?
   addedAt         DateTime?
-
   createdAt       DateTime      @default(now())
-  updatedAt temporal.updatedAt()
+  updatedAt       temporal.updatedAt()
 
   @@unique([source, externalId])
 }

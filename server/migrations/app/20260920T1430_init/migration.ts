@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/6ced21d4c9b5dbfa8c2b170c2b715ddbc02a372a12b0a6ea3eacfd5690573c45/contract';
-import endContract from '../../snapshots/6ced21d4c9b5dbfa8c2b170c2b715ddbc02a372a12b0a6ea3eacfd5690573c45/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/e98e2e822786bb134fde970e2e0ab68a01729384ede0c32e16bad816a6178bc3/contract.d.ts';
+import endContract from '../../snapshots/e98e2e822786bb134fde970e2e0ab68a01729384ede0c32e16bad816a6178bc3/contract.json' with { type: 'json' };
 import {
   Migration,
   MigrationCLI,
@@ -23,17 +23,13 @@ export default class M extends Migration<never, End> {
         columns: [
           col('addedAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-temporal@1' } }),
           col('address', 'text', { codecRef: { codecId: 'pg/text@1' } }),
-          col('area', 'numeric(10,2)', {
-            codecRef: { codecId: 'pg/numeric@1', typeParams: { precision: 10, scale: 2 } },
-          }),
+          col('area', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
           col('createdAt', 'timestamptz', {
             notNull: true,
             default: fn('now()'),
             codecRef: { codecId: 'pg/timestamptz-temporal@1' },
           }),
-          col('deposit', 'numeric(10,2)', {
-            codecRef: { codecId: 'pg/numeric@1', typeParams: { precision: 10, scale: 2 } },
-          }),
+          col('deposit', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
           col('description', 'text', { codecRef: { codecId: 'pg/text@1' } }),
           col('externalId', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
           col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
@@ -42,18 +38,10 @@ export default class M extends Migration<never, End> {
             default: lit(false),
             codecRef: { codecId: 'pg/bool@1' },
           }),
-          col('latitude', 'numeric(10,7)', {
-            codecRef: { codecId: 'pg/numeric@1', typeParams: { precision: 10, scale: 7 } },
-          }),
-          col('longitude', 'numeric(10,7)', {
-            codecRef: { codecId: 'pg/numeric@1', typeParams: { precision: 10, scale: 7 } },
-          }),
-          col('price', 'numeric(10,2)', {
-            codecRef: { codecId: 'pg/numeric@1', typeParams: { precision: 10, scale: 2 } },
-          }),
-          col('rent', 'numeric(10,2)', {
-            codecRef: { codecId: 'pg/numeric@1', typeParams: { precision: 10, scale: 2 } },
-          }),
+          col('latitude', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+          col('longitude', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+          col('price', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
+          col('rent', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
           col('rooms', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
           col('source', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
           col('title', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),

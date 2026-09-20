@@ -5,7 +5,7 @@ export enum ListingSource {
 
 export interface Listing {
   title: string;
-  url: string | null;
+  url: string ;
   externalId: string;
   source: ListingSource;
   isExactAddress: boolean;

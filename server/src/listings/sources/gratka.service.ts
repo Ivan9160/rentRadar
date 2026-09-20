@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-import { Listing, ListingSource } from '../interfaces/listing.interface';
-import { AddressExtractor } from '../parsers/adressExtractor';
-import { DepositExtractor } from '../parsers/depositExtractor';
-import { RentExtractor } from '../parsers/rentExtractor';
-import { GeocodingService } from '../../geocoding/geocoding.service';
+import { Listing, ListingSource } from '../interfaces/listing.interface.ts';
+import { AddressExtractor } from '../parsers/adressExtractor.ts';
+import { DepositExtractor } from '../parsers/depositExtractor.ts';
+import { RentExtractor } from '../parsers/rentExtractor.ts';
+import { GeocodingService } from '../../geocoding/geocoding.service.ts';
 
 
 @Injectable()
@@ -162,7 +162,7 @@ export class GratkaService {
 
       listings.push({
         title,
-        url: listingUrl,
+        url: listingUrl!,
         price,
         rent: null,
         deposit: null,

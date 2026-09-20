@@ -41,7 +41,7 @@
     "execute": [
       {
         "description": "create table \"listing\"",
-        "sql": "CREATE TABLE \"public\".\"listing\" (\n  \"addedAt\" timestamptz,\n  \"address\" text,\n  \"area\" numeric(10,2),\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deposit\" numeric(10,2),\n  \"description\" text,\n  \"externalId\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isExactAddress\" bool DEFAULT false NOT NULL,\n  \"latitude\" numeric(10,7),\n  \"longitude\" numeric(10,7),\n  \"price\" numeric(10,2),\n  \"rent\" numeric(10,2),\n  \"rooms\" int4,\n  \"source\" text NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"url\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"listing_source_check_527f1cb0\" CHECK (\"source\" IN ('GRATKA', 'OTODOM'))\n)",
+        "sql": "CREATE TABLE \"public\".\"listing\" (\n  \"addedAt\" timestamptz,\n  \"address\" text,\n  \"area\" float8,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deposit\" int4,\n  \"description\" text,\n  \"externalId\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isExactAddress\" bool DEFAULT false NOT NULL,\n  \"latitude\" float8,\n  \"longitude\" float8,\n  \"price\" int4,\n  \"rent\" int4,\n  \"rooms\" int4,\n  \"source\" text NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"url\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"listing_source_check_527f1cb0\" CHECK (\"source\" IN ('GRATKA', 'OTODOM'))\n)",
         "params": []
       }
     ],

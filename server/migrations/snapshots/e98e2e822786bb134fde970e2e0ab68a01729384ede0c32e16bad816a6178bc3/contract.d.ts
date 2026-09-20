@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'6ced21d4c9b5dbfa8c2b170c2b715ddbc02a372a12b0a6ea3eacfd5690573c45'>;
+  StorageHashBase<'e98e2e822786bb134fde970e2e0ab68a01729384ede0c32e16bad816a6178bc3'>;
 export type ExecutionHash =
   ExecutionHashBase<'67a1bc0350cedb30f57ea2466628492fa3c5dd9758c82379c01184eccb51e3c8'>;
 export type ProfileHash =
@@ -248,15 +248,15 @@ export type FieldOutputTypes = {
       readonly source: 'GRATKA' | 'OTODOM';
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly url: CodecTypes['pg/text@1']['output'];
-      readonly price: Numeric<10, 2> | null;
-      readonly rent: Numeric<10, 2> | null;
-      readonly deposit: Numeric<10, 2> | null;
+      readonly price: CodecTypes['pg/int4@1']['output'] | null;
+      readonly rent: CodecTypes['pg/int4@1']['output'] | null;
+      readonly deposit: CodecTypes['pg/int4@1']['output'] | null;
       readonly rooms: CodecTypes['pg/int4@1']['output'] | null;
-      readonly area: Numeric<10, 2> | null;
+      readonly area: CodecTypes['pg/float8@1']['output'] | null;
       readonly address: CodecTypes['pg/text@1']['output'] | null;
       readonly isExactAddress: CodecTypes['pg/bool@1']['output'];
-      readonly latitude: Numeric<10, 7> | null;
-      readonly longitude: Numeric<10, 7> | null;
+      readonly latitude: CodecTypes['pg/float8@1']['output'] | null;
+      readonly longitude: CodecTypes['pg/float8@1']['output'] | null;
       readonly description: CodecTypes['pg/text@1']['output'] | null;
       readonly addedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
@@ -272,15 +272,15 @@ export type FieldInputTypes = {
       readonly source: 'GRATKA' | 'OTODOM';
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly url: CodecTypes['pg/text@1']['input'];
-      readonly price: CodecTypes['pg/numeric@1']['input'] | null;
-      readonly rent: CodecTypes['pg/numeric@1']['input'] | null;
-      readonly deposit: CodecTypes['pg/numeric@1']['input'] | null;
+      readonly price: CodecTypes['pg/int4@1']['input'] | null;
+      readonly rent: CodecTypes['pg/int4@1']['input'] | null;
+      readonly deposit: CodecTypes['pg/int4@1']['input'] | null;
       readonly rooms: CodecTypes['pg/int4@1']['input'] | null;
-      readonly area: CodecTypes['pg/numeric@1']['input'] | null;
+      readonly area: CodecTypes['pg/float8@1']['input'] | null;
       readonly address: CodecTypes['pg/text@1']['input'] | null;
       readonly isExactAddress: CodecTypes['pg/bool@1']['input'];
-      readonly latitude: CodecTypes['pg/numeric@1']['input'] | null;
-      readonly longitude: CodecTypes['pg/numeric@1']['input'] | null;
+      readonly latitude: CodecTypes['pg/float8@1']['input'] | null;
+      readonly longitude: CodecTypes['pg/float8@1']['input'] | null;
       readonly description: CodecTypes['pg/text@1']['input'] | null;
       readonly addedAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
@@ -293,17 +293,17 @@ export type StorageColumnTypes = {
     readonly listing: {
       readonly addedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
       readonly address: CodecTypes['pg/text@1']['output'] | null;
-      readonly area: Numeric<10, 2> | null;
+      readonly area: CodecTypes['pg/float8@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
-      readonly deposit: Numeric<10, 2> | null;
+      readonly deposit: CodecTypes['pg/int4@1']['output'] | null;
       readonly description: CodecTypes['pg/text@1']['output'] | null;
       readonly externalId: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly isExactAddress: CodecTypes['pg/bool@1']['output'];
-      readonly latitude: Numeric<10, 7> | null;
-      readonly longitude: Numeric<10, 7> | null;
-      readonly price: Numeric<10, 2> | null;
-      readonly rent: Numeric<10, 2> | null;
+      readonly latitude: CodecTypes['pg/float8@1']['output'] | null;
+      readonly longitude: CodecTypes['pg/float8@1']['output'] | null;
+      readonly price: CodecTypes['pg/int4@1']['output'] | null;
+      readonly rent: CodecTypes['pg/int4@1']['output'] | null;
       readonly rooms: CodecTypes['pg/int4@1']['output'] | null;
       readonly source: 'GRATKA' | 'OTODOM';
       readonly title: CodecTypes['pg/text@1']['output'];
@@ -317,17 +317,17 @@ export type StorageColumnInputTypes = {
     readonly listing: {
       readonly addedAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
       readonly address: CodecTypes['pg/text@1']['input'] | null;
-      readonly area: CodecTypes['pg/numeric@1']['input'] | null;
+      readonly area: CodecTypes['pg/float8@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
-      readonly deposit: CodecTypes['pg/numeric@1']['input'] | null;
+      readonly deposit: CodecTypes['pg/int4@1']['input'] | null;
       readonly description: CodecTypes['pg/text@1']['input'] | null;
       readonly externalId: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly isExactAddress: CodecTypes['pg/bool@1']['input'];
-      readonly latitude: CodecTypes['pg/numeric@1']['input'] | null;
-      readonly longitude: CodecTypes['pg/numeric@1']['input'] | null;
-      readonly price: CodecTypes['pg/numeric@1']['input'] | null;
-      readonly rent: CodecTypes['pg/numeric@1']['input'] | null;
+      readonly latitude: CodecTypes['pg/float8@1']['input'] | null;
+      readonly longitude: CodecTypes['pg/float8@1']['input'] | null;
+      readonly price: CodecTypes['pg/int4@1']['input'] | null;
+      readonly rent: CodecTypes['pg/int4@1']['input'] | null;
       readonly rooms: CodecTypes['pg/int4@1']['input'] | null;
       readonly source: 'GRATKA' | 'OTODOM';
       readonly title: CodecTypes['pg/text@1']['input'];
@@ -344,15 +344,15 @@ export namespace Models {
     source: 'GRATKA' | 'OTODOM';
     title: CodecTypes['pg/text@1']['output'];
     url: CodecTypes['pg/text@1']['output'];
-    price: Numeric<10, 2> | null;
-    rent: Numeric<10, 2> | null;
-    deposit: Numeric<10, 2> | null;
+    price: CodecTypes['pg/int4@1']['output'] | null;
+    rent: CodecTypes['pg/int4@1']['output'] | null;
+    deposit: CodecTypes['pg/int4@1']['output'] | null;
     rooms: CodecTypes['pg/int4@1']['output'] | null;
-    area: Numeric<10, 2> | null;
+    area: CodecTypes['pg/float8@1']['output'] | null;
     address: CodecTypes['pg/text@1']['output'] | null;
     isExactAddress: CodecTypes['pg/bool@1']['output'];
-    latitude: Numeric<10, 7> | null;
-    longitude: Numeric<10, 7> | null;
+    latitude: CodecTypes['pg/float8@1']['output'] | null;
+    longitude: CodecTypes['pg/float8@1']['output'] | null;
     description: CodecTypes['pg/text@1']['output'] | null;
     addedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
@@ -417,22 +417,19 @@ type ContractBase = Omit<
                   readonly nullable: false;
                 };
                 readonly price: {
-                  readonly nativeType: 'numeric';
-                  readonly codecId: 'pg/numeric@1';
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
                   readonly nullable: true;
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
                 };
                 readonly rent: {
-                  readonly nativeType: 'numeric';
-                  readonly codecId: 'pg/numeric@1';
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
                   readonly nullable: true;
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
                 };
                 readonly deposit: {
-                  readonly nativeType: 'numeric';
-                  readonly codecId: 'pg/numeric@1';
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
                   readonly nullable: true;
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
                 };
                 readonly rooms: {
                   readonly nativeType: 'int4';
@@ -440,10 +437,9 @@ type ContractBase = Omit<
                   readonly nullable: true;
                 };
                 readonly area: {
-                  readonly nativeType: 'numeric';
-                  readonly codecId: 'pg/numeric@1';
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
                   readonly nullable: true;
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
                 };
                 readonly address: {
                   readonly nativeType: 'text';
@@ -460,16 +456,14 @@ type ContractBase = Omit<
                   };
                 };
                 readonly latitude: {
-                  readonly nativeType: 'numeric';
-                  readonly codecId: 'pg/numeric@1';
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
                   readonly nullable: true;
-                  readonly typeParams: { readonly precision: 10; readonly scale: 7 };
                 };
                 readonly longitude: {
-                  readonly nativeType: 'numeric';
-                  readonly codecId: 'pg/numeric@1';
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
                   readonly nullable: true;
-                  readonly typeParams: { readonly precision: 10; readonly scale: 7 };
                 };
                 readonly description: {
                   readonly nativeType: 'text';
@@ -545,27 +539,15 @@ type ContractBase = Omit<
               };
               readonly price: {
                 readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/numeric@1';
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
-                };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly rent: {
                 readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/numeric@1';
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
-                };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly deposit: {
                 readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/numeric@1';
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
-                };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly rooms: {
                 readonly nullable: true;
@@ -573,11 +555,7 @@ type ContractBase = Omit<
               };
               readonly area: {
                 readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/numeric@1';
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
-                };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
               };
               readonly address: {
                 readonly nullable: true;
@@ -589,19 +567,11 @@ type ContractBase = Omit<
               };
               readonly latitude: {
                 readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/numeric@1';
-                  readonly typeParams: { readonly precision: 10; readonly scale: 7 };
-                };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
               };
               readonly longitude: {
                 readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/numeric@1';
-                  readonly typeParams: { readonly precision: 10; readonly scale: 7 };
-                };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
               };
               readonly description: {
                 readonly nullable: true;
